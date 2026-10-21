@@ -1,0 +1,126 @@
+{
+  "benchmark": "minecraft_real_wild_longbench_v1",
+  "schema_version": 1,
+  "visibility": "evaluator_only",
+  "diagnostics": [
+    {
+      "task_id": "wooden_age_v1",
+      "nodes": [
+        {"node_id": "wood", "description": "Wood acquired", "predicates": [{"inventory_any_at_least": {"items": ["oak_log", "birch_log", "spruce_log", "log"], "count": 1}}]},
+        {"node_id": "planks", "description": "Planks crafted", "dependencies": ["wood"], "predicates": [{"inventory_any_at_least": {"items": ["oak_planks", "birch_planks", "spruce_planks", "planks"], "count": 3}}]},
+        {"node_id": "table", "description": "Table crafted", "dependencies": ["planks"], "predicates": [{"inventory_at_least": {"crafting_table": 1}}]},
+        {"node_id": "wooden_pickaxe", "description": "Wooden pickaxe crafted", "dependencies": ["table"], "predicates": [{"inventory_at_least": {"wooden_pickaxe": 1}}]}
+      ]
+    },
+    {
+      "task_id": "stone_age_v1",
+      "nodes": [
+        {"node_id": "wooden_pickaxe", "description": "Wooden pickaxe ready", "predicates": [{"inventory_at_least": {"wooden_pickaxe": 1}}]},
+        {"node_id": "stone", "description": "Stone collected", "dependencies": ["wooden_pickaxe"], "predicates": [{"inventory_any_at_least": {"items": ["cobblestone", "stone"], "count": 3}}]},
+        {"node_id": "stone_pickaxe", "description": "Stone pickaxe crafted", "dependencies": ["stone"], "predicates": [{"inventory_at_least": {"stone_pickaxe": 1}}]},
+        {"node_id": "furnace", "description": "Furnace crafted", "dependencies": ["stone"], "predicates": [{"inventory_at_least": {"furnace": 1}}]}
+      ]
+    },
+    {
+      "task_id": "light_up_v1",
+      "nodes": [
+        {"node_id": "furnace", "description": "Furnace available", "predicates": [{"any_of": [{"inventory_at_least": {"furnace": 1}}, {"placed_at_least": {"furnace": 1}}]}]},
+        {"node_id": "charcoal", "description": "Charcoal produced", "dependencies": ["furnace"], "predicates": [{"flag_equals": {"charcoal_produced": true}}]},
+        {"node_id": "torches", "description": "Four torches made", "dependencies": ["charcoal"], "predicates": [{"inventory_at_least": {"torch": 4}}]}
+      ]
+    },
+    {
+      "task_id": "cook_dinner_v1",
+      "nodes": [
+        {"node_id": "raw_food", "description": "Raw food acquired", "predicates": [{"inventory_any_at_least": {"items": ["beef", "porkchop", "chicken", "mutton"], "count": 1}}]},
+        {"node_id": "furnace", "description": "Furnace available", "predicates": [{"any_of": [{"inventory_at_least": {"furnace": 1}}, {"placed_at_least": {"furnace": 1}}]}]},
+        {"node_id": "cooked_food", "description": "Food cooked", "dependencies": ["raw_food", "furnace"], "predicates": [{"inventory_any_at_least": {"items": ["cooked_beef", "cooked_porkchop", "cooked_chicken", "cooked_mutton"], "count": 1}}]}
+      ]
+    },
+    {
+      "task_id": "glass_maker_v1",
+      "nodes": [
+        {"node_id": "sand", "description": "Sand collected", "predicates": [{"inventory_at_least": {"sand": 3}}]},
+        {"node_id": "furnace", "description": "Furnace available", "predicates": [{"any_of": [{"inventory_at_least": {"furnace": 1}}, {"placed_at_least": {"furnace": 1}}]}]},
+        {"node_id": "glass", "description": "Glass smelted", "dependencies": ["sand", "furnace"], "predicates": [{"inventory_at_least": {"glass": 3}}]}
+      ]
+    },
+    {
+      "task_id": "survival_iron_ingot_v2",
+      "nodes": [
+        {"node_id": "wood", "description": "Wood acquired", "predicates": [{"inventory_any_at_least": {"items": ["oak_log", "birch_log", "spruce_log", "log"], "count": 1}}]},
+        {"node_id": "table", "description": "Crafting table ready", "dependencies": ["wood"], "predicates": [{"any_of": [{"inventory_at_least": {"crafting_table": 1}}, {"placed_at_least": {"crafting_table": 1}}]}]},
+        {"node_id": "wooden_pickaxe", "description": "Wooden pickaxe ready", "dependencies": ["table"], "predicates": [{"inventory_at_least": {"wooden_pickaxe": 1}}]},
+        {"node_id": "stone", "description": "Stone collected", "dependencies": ["wooden_pickaxe"], "predicates": [{"inventory_any_at_least": {"items": ["cobblestone", "stone"], "count": 3}}]},
+        {"node_id": "stone_pickaxe", "description": "Stone pickaxe ready", "dependencies": ["stone"], "predicates": [{"inventory_at_least": {"stone_pickaxe": 1}}]},
+        {"node_id": "iron_ore", "description": "Iron ore acquired", "dependencies": ["stone_pickaxe"], "predicates": [{"inventory_any_at_least": {"items": ["raw_iron", "iron_ore"], "count": 1}}]},
+        {"node_id": "furnace", "description": "Furnace ready", "dependencies": ["stone"], "predicates": [{"any_of": [{"inventory_at_least": {"furnace": 1}}, {"placed_at_least": {"furnace": 1}}]}]},
+        {"node_id": "iron_ingot", "description": "Iron ingot smelted", "dependencies": ["iron_ore", "furnace"], "predicates": [{"inventory_at_least": {"iron_ingot": 1}}]}
+      ]
+    },
+    {
+      "task_id": "iron_tool_v1",
+      "nodes": [
+        {"node_id": "iron_ingots", "description": "Three iron ingots ready", "predicates": [{"inventory_at_least": {"iron_ingot": 3}}]},
+        {"node_id": "table", "description": "Crafting table available", "predicates": [{"any_of": [{"inventory_at_least": {"crafting_table": 1}}, {"placed_at_least": {"crafting_table": 1}}]}]},
+        {"node_id": "iron_pickaxe", "description": "Iron pickaxe crafted", "dependencies": ["iron_ingots", "table"], "predicates": [{"inventory_at_least": {"iron_pickaxe": 1}}]}
+      ]
+    },
+    {
+      "task_id": "field_camp_v1",
+      "nodes": [
+        {"node_id": "table", "description": "Table placed", "predicates": [{"placed_at_least": {"crafting_table": 1}}]},
+        {"node_id": "furnace", "description": "Furnace placed", "predicates": [{"placed_at_least": {"furnace": 1}}]},
+        {"node_id": "chest", "description": "Chest placed", "predicates": [{"placed_at_least": {"chest": 1}}]},
+        {"node_id": "torch", "description": "Torch placed", "predicates": [{"placed_at_least": {"torch": 1}}]}
+      ]
+    },
+    {
+      "task_id": "cave_survey_v1",
+      "nodes": [
+        {"node_id": "entrance_recorded", "description": "Cave entrance recorded", "predicates": [{"flag_equals": {"cave_entrance_recorded": true}}]},
+        {"node_id": "cave_entered", "description": "Natural cave entered", "dependencies": ["entrance_recorded"], "predicates": [{"flag_equals": {"cave_entered": true}}]},
+        {"node_id": "returned", "description": "Returned near entrance", "dependencies": ["cave_entered"], "predicates": [{"flag_equals": {"returned_to_cave_entrance": true}}]}
+      ]
+    },
+    {
+      "task_id": "resource_revisit_v1",
+      "nodes": [
+        {"node_id": "tree_site", "description": "Tree site recorded", "predicates": [{"flag_equals": {"tree_site_recorded": true}}]},
+        {"node_id": "stone_site", "description": "Stone site recorded", "predicates": [{"flag_equals": {"stone_site_recorded": true}}]},
+        {"node_id": "returned", "description": "Requested site revisited", "dependencies": ["tree_site", "stone_site"], "predicates": [{"flag_equals": {"returned_to_requested_resource": true}}]}
+      ]
+    },
+    {
+      "task_id": "camp_return_v1",
+      "nodes": [
+        {"node_id": "camp_placed", "description": "Camp landmark placed", "predicates": [{"placed_at_least": {"crafting_table": 1}}]},
+        {"node_id": "camp_left", "description": "Camp left beyond visual range", "dependencies": ["camp_placed"], "predicates": [{"flag_equals": {"left_camp_visual_range": true}}]},
+        {"node_id": "camp_returned", "description": "Same camp revisited", "dependencies": ["camp_left"], "predicates": [{"flag_equals": {"returned_to_same_camp": true}}]}
+      ]
+    },
+    {
+      "task_id": "tool_break_recovery_v1",
+      "nodes": [
+        {"node_id": "break_observed", "description": "Tool break detected", "predicates": [{"flag_equals": {"tool_break_observed": true}}]},
+        {"node_id": "replacement", "description": "Replacement tool ready", "dependencies": ["break_observed"], "requires_prior_dependencies": true, "predicates": [{"inventory_any_at_least": {"items": ["wooden_pickaxe", "stone_pickaxe"], "count": 1}}]},
+        {"node_id": "collection_resumed", "description": "Stone collection resumed", "dependencies": ["replacement"], "predicates": [{"inventory_at_least": {"cobblestone": 6}}]}
+      ]
+    },
+    {
+      "task_id": "fuel_alternative_v1",
+      "nodes": [
+        {"node_id": "alternative_selected", "description": "Non-coal fuel selected", "predicates": [{"flag_equals": {"non_coal_fuel_used": true}}]},
+        {"node_id": "iron_smelted", "description": "Iron smelted with alternative", "dependencies": ["alternative_selected"], "predicates": [{"inventory_at_least": {"iron_ingot": 1}}]}
+      ]
+    },
+    {
+      "task_id": "lost_drop_recovery_v1",
+      "nodes": [
+        {"node_id": "missed_drop", "description": "Missed drop detected", "predicates": [{"flag_equals": {"missed_drop_observed": true}}]},
+        {"node_id": "drop_recovered", "description": "Dropped log recovered", "dependencies": ["missed_drop"], "predicates": [{"inventory_any_at_least": {"items": ["oak_log", "birch_log", "spruce_log", "log"], "count": 1}}]},
+        {"node_id": "planks", "description": "Recovered log used", "dependencies": ["drop_recovered"], "predicates": [{"inventory_any_at_least": {"items": ["oak_planks", "birch_planks", "spruce_planks", "planks"], "count": 4}}]}
+      ]
+    }
+  ]
+}

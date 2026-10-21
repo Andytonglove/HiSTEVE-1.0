@@ -1,0 +1,616 @@
+{
+  "subtasks": [
+    {
+      "skill_id": "observe_scene",
+      "family": "perception",
+      "description": "Inspect the current scene and update target and landmark beliefs.",
+      "parameter_schema": {
+        "required": [],
+        "properties": {
+          "focus": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "new_visible_target",
+        "landmark_updated"
+      ],
+      "failure_signatures": [
+        "no_new_evidence"
+      ],
+      "default_budget_steps": 24,
+      "completion_criterion": "For focus=inventory, success requires a visibly open player inventory whose contents can be inspected in current images. Report only visually established item counts; empty visible slots are not evidence that unseen slots are empty. Do not claim resource acquisition or crafting from inspection. For other focuses, success requires a newly observed target, terrain feature, or landmark supported by the current images. Elapsed scanning alone is not success."
+    },
+    {
+      "skill_id": "explore_for",
+      "family": "exploration",
+      "description": "Search the natural world for a requested resource, entity, terrain feature, or landmark.",
+      "parameter_schema": {
+        "required": [
+          "target"
+        ],
+        "properties": {
+          "target": {
+            "type": "string"
+          },
+          "strategy": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "target_visible",
+        "new_terrain",
+        "position_progress"
+      ],
+      "failure_signatures": [
+        "timeout_without_target",
+        "search_loop",
+        "stuck"
+      ],
+      "default_budget_steps": 480,
+      "completion_criterion": "The requested target must be visible and identifiable in current first-person images. Camera rotation or time spent is not proof of discovery."
+    },
+    {
+      "skill_id": "approach_target",
+      "family": "navigation",
+      "description": "Move to a visually grounded target while keeping it centered and reachable.",
+      "parameter_schema": {
+        "required": [
+          "target"
+        ],
+        "properties": {
+          "target": {
+            "type": "string"
+          },
+          "stop_distance": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "target_larger",
+        "target_centered",
+        "distance_reduced"
+      ],
+      "failure_signatures": [
+        "target_lost",
+        "no_position_progress"
+      ],
+      "default_budget_steps": 120,
+      "completion_criterion": "The requested target remains visible, is centered and visibly reachable for the intended interaction. Target identity must be preserved."
+    },
+    {
+      "skill_id": "acquire_resource",
+      "family": "interaction",
+      "description": "Mine or collect a requested world resource and verify its inventory delta.",
+      "parameter_schema": {
+        "required": [
+          "item",
+          "count"
+        ],
+        "properties": {
+          "item": {
+            "type": "string",
+            "enum": [
+              "tree",
+              "trunk",
+              "wood",
+              "log",
+              "oak_log",
+              "birch_log",
+              "spruce_log",
+              "jungle_log",
+              "stone",
+              "cobblestone",
+              "deepslate",
+              "rock",
+              "ore",
+              "iron",
+              "iron_ore",
+              "raw_iron",
+              "coal",
+              "coal_ore",
+              "diamond",
+              "diamond_ore",
+              "sand",
+              "beach",
+              "riverbank",
+              "desert"
+            ]
+          },
+          "count": {
+            "type": "integer"
+          },
+          "tool": {
+            "type": "string",
+            "enum": [
+              "wooden_pickaxe",
+              "stone_pickaxe",
+              "iron_pickaxe",
+              "golden_pickaxe",
+              "diamond_pickaxe",
+              "wooden_axe",
+              "stone_axe",
+              "iron_axe",
+              "golden_axe",
+              "diamond_axe",
+              "wooden_shovel",
+              "stone_shovel",
+              "iron_shovel",
+              "golden_shovel",
+              "diamond_shovel",
+              "shears"
+            ]
+          }
+        }
+      },
+      "inventory_parameters": [
+        "tool"
+      ],
+      "progress_signals": [
+        "mine_event",
+        "inventory_delta",
+        "drop_visible"
+      ],
+      "failure_signatures": [
+        "wrong_block_attacked",
+        "no_inventory_delta",
+        "tool_missing"
+      ],
+      "default_budget_steps": 180,
+      "completion_criterion": "The requested item must visibly increase in player inventory relative to the invocation start. Breaking a block without collecting its drop is incomplete."
+    },
+    {
+      "skill_id": "collect_drop",
+      "family": "interaction",
+      "description": "Locate and collect a recent mined or defeated-entity drop.",
+      "parameter_schema": {
+        "required": [
+          "item"
+        ],
+        "properties": {
+          "item": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "drop_closer",
+        "pickup_event",
+        "inventory_delta"
+      ],
+      "failure_signatures": [
+        "drop_not_collected",
+        "drop_lost"
+      ],
+      "default_budget_steps": 80,
+      "completion_criterion": "The specified dropped item must visibly enter inventory. Walking or disappearance of a drop alone is insufficient."
+    },
+    {
+      "skill_id": "craft_inventory_item",
+      "family": "gui",
+      "description": "Craft a requested item using the player inventory crafting grid.",
+      "parameter_schema": {
+        "required": [
+          "item",
+          "count"
+        ],
+        "properties": {
+          "item": {
+            "type": "string",
+            "enum": [
+              "planks",
+              "oak_planks",
+              "birch_planks",
+              "crafting_table",
+              "table",
+              "stick",
+              "sticks",
+              "torch",
+              "torches"
+            ]
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "progress_signals": [
+        "gui_open",
+        "slot_item_changed",
+        "inventory_delta"
+      ],
+      "failure_signatures": [
+        "wrong_slot",
+        "recipe_not_started",
+        "gui_closed"
+      ],
+      "default_budget_steps": 160,
+      "completion_criterion": "The correct requested product must be retrieved from the output slot into player inventory, with a visible positive count change. Recipe layout or output appearance alone is incomplete."
+    },
+    {
+      "skill_id": "craft_table_item",
+      "family": "gui",
+      "description": "Use a crafting table GUI to craft a requested tool or block.",
+      "parameter_schema": {
+        "required": [
+          "item",
+          "count"
+        ],
+        "properties": {
+          "item": {
+            "type": "string",
+            "enum": [
+              "wooden_pickaxe",
+              "stone_pickaxe",
+              "iron_pickaxe",
+              "furnace",
+              "chest"
+            ]
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "preconditions": [
+        {
+          "any_of": [
+            {
+              "inventory_at_least": {
+                "crafting_table": 1
+              }
+            },
+            {
+              "visible_any": [
+                "crafting_table",
+                "workbench"
+              ]
+            },
+            {
+              "placed_at_least": {
+                "crafting_table": 1
+              }
+            }
+          ]
+        }
+      ],
+      "progress_signals": [
+        "table_gui_open",
+        "slot_item_changed",
+        "inventory_delta"
+      ],
+      "failure_signatures": [
+        "table_not_reachable",
+        "wrong_recipe",
+        "wrong_slot"
+      ],
+      "default_budget_steps": 220,
+      "completion_criterion": "The correct requested product must be retrieved into player inventory with a visible positive count change. Opening the table or partially filling its grid is incomplete."
+    },
+    {
+      "skill_id": "place_block",
+      "family": "placement",
+      "inventory_parameters": [
+        "item"
+      ],
+      "description": "Place a requested inventory block at a reachable location and verify it in the world.",
+      "parameter_schema": {
+        "required": [
+          "item"
+        ],
+        "properties": {
+          "item": {
+            "type": "string",
+            "enum": [
+              "crafting_table",
+              "table",
+              "furnace",
+              "chest",
+              "torch"
+            ]
+          },
+          "placement_constraint": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "item_equipped",
+        "place_event",
+        "block_visible"
+      ],
+      "failure_signatures": [
+        "invalid_surface",
+        "item_not_equipped",
+        "placement_not_observed"
+      ],
+      "default_budget_steps": 100,
+      "completion_criterion": "A new block of the requested type must be visually established at the intended reachable location, consistent with inventory use. Merely equipping it is incomplete."
+    },
+    {
+      "skill_id": "smelt_item",
+      "family": "gui",
+      "description": "Smelt a requested input with an available fuel and collect the output.",
+      "parameter_schema": {
+        "required": [
+          "input",
+          "output",
+          "count"
+        ],
+        "properties": {
+          "input": {
+            "type": "string",
+            "enum": [
+              "iron_ore",
+              "red_sand",
+              "sand",
+              "beef",
+              "chicken",
+              "porkchop",
+              "mutton",
+              "acacia_log",
+              "acacia_wood",
+              "birch_log",
+              "birch_wood",
+              "dark_oak_log",
+              "dark_oak_wood",
+              "jungle_log",
+              "jungle_wood",
+              "oak_log",
+              "oak_wood",
+              "spruce_log",
+              "spruce_wood",
+              "stripped_acacia_log",
+              "stripped_acacia_wood",
+              "stripped_birch_log",
+              "stripped_birch_wood",
+              "stripped_dark_oak_log",
+              "stripped_dark_oak_wood",
+              "stripped_jungle_log",
+              "stripped_jungle_wood",
+              "stripped_oak_log",
+              "stripped_oak_wood",
+              "stripped_spruce_log",
+              "stripped_spruce_wood"
+            ]
+          },
+          "output": {
+            "type": "string",
+            "enum": [
+              "iron_ingot",
+              "charcoal",
+              "glass",
+              "cooked_beef",
+              "cooked_chicken",
+              "cooked_porkchop",
+              "cooked_mutton"
+            ]
+          },
+          "count": {
+            "type": "integer"
+          },
+          "fuel_policy": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        {
+          "any_of": [
+            {
+              "inventory_at_least": {
+                "furnace": 1
+              }
+            },
+            {
+              "visible_any": [
+                "furnace"
+              ]
+            },
+            {
+              "placed_at_least": {
+                "furnace": 1
+              }
+            }
+          ]
+        }
+      ],
+      "progress_signals": [
+        "furnace_gui_open",
+        "input_inserted",
+        "fuel_inserted",
+        "output_ready",
+        "inventory_delta"
+      ],
+      "failure_signatures": [
+        "missing_fuel",
+        "wrong_slot",
+        "output_not_collected"
+      ],
+      "default_budget_steps": 320,
+      "completion_criterion": "The requested smelted product must visibly enter player inventory. Fuel ignition, active progress and an output still inside the furnace are intermediate states only."
+    },
+    {
+      "skill_id": "hunt_entity",
+      "family": "combat",
+      "description": "Find, approach, and defeat a requested entity while tracking its drops.",
+      "parameter_schema": {
+        "required": [
+          "entity"
+        ],
+        "properties": {
+          "entity": {
+            "type": "string",
+            "enum": [
+              "cow",
+              "pig",
+              "chicken",
+              "sheep",
+              "rabbit"
+            ]
+          },
+          "desired_drop": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "entity_visible",
+        "distance_reduced",
+        "damage_event",
+        "drop_visible"
+      ],
+      "failure_signatures": [
+        "entity_lost",
+        "health_low",
+        "attacking_wrong_target"
+      ],
+      "default_budget_steps": 480,
+      "completion_criterion": "The same requested entity must be visibly defeated. If a desired drop is specified, visually confirm that it enters inventory; disappearance off-screen is not a kill certificate."
+    },
+    {
+      "skill_id": "record_landmark",
+      "family": "memory",
+      "description": "Remember a visually observed landmark and its distinguishing surroundings.",
+      "parameter_schema": {
+        "required": [
+          "landmark_id"
+        ],
+        "properties": {
+          "landmark_id": {
+            "type": "string",
+            "enum": [
+              "cave_entrance",
+              "tree_site",
+              "stone_site",
+              "camp"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "landmark_written"
+      ],
+      "failure_signatures": [
+        "visual_context_missing",
+        "visual_evidence_missing"
+      ],
+      "default_budget_steps": 16,
+      "completion_criterion": "Record a distinguishable visually observed landmark and its relative visual context. Do not invent absolute coordinates or infer success from a timer."
+    },
+    {
+      "skill_id": "return_to_landmark",
+      "family": "navigation",
+      "description": "Retrieve a stored landmark and navigate back using repeated observation and correction.",
+      "parameter_schema": {
+        "required": [
+          "landmark_id"
+        ],
+        "properties": {
+          "landmark_id": {
+            "type": "string",
+            "enum": [
+              "cave_entrance",
+              "tree_site",
+              "stone_site",
+              "camp"
+            ]
+          },
+          "arrival_predicate": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "distance_to_landmark_reduced",
+        "landmark_visible",
+        "arrival_verified"
+      ],
+      "failure_signatures": [
+        "landmark_not_found",
+        "navigation_loop",
+        "stale_location"
+      ],
+      "default_budget_steps": 600,
+      "completion_criterion": "Current images must match the previously recorded landmark's distinguishing visual context. Similar-looking terrain alone is insufficient."
+    },
+    {
+      "skill_id": "recover_navigation",
+      "family": "recovery",
+      "description": "Break a navigation or search loop, re-observe, and choose a different local direction.",
+      "parameter_schema": {
+        "required": [],
+        "properties": {
+          "failure_type": {
+            "type": "string"
+          }
+        }
+      },
+      "progress_signals": [
+        "stuck_score_reduced",
+        "new_view",
+        "position_progress"
+      ],
+      "failure_signatures": [
+        "recovery_no_progress"
+      ],
+      "default_budget_steps": 100,
+      "completion_criterion": "Images must show a changed usable viewpoint or traversal that resolves the stated obstruction. Repeated camera motion without resolving it is incomplete."
+    },
+    {
+      "skill_id": "recover_hazard",
+      "family": "recovery",
+      "description": "Exit an observed immediate hazard and re-establish a stable state before replanning.",
+      "parameter_schema": {
+        "required": [
+          "hazard"
+        ],
+        "properties": {
+          "hazard": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        {
+          "flag_equals": {
+            "hazard_active": true
+          }
+        }
+      ],
+      "progress_signals": [
+        "hazard_inactive",
+        "health_stable"
+      ],
+      "failure_signatures": [
+        "hazard_persists",
+        "health_declining"
+      ],
+      "default_budget_steps": 120,
+      "completion_criterion": "The previously visible hazard must be avoided or visibly resolved. Do not infer safety from inaccessible simulator health or pose."
+    },
+    {
+      "skill_id": "close_gui",
+      "family": "gui",
+      "description": "Close the current GUI and restore world control before replanning.",
+      "parameter_schema": {
+        "required": [],
+        "properties": {}
+      },
+      "progress_signals": [
+        "gui_closed"
+      ],
+      "failure_signatures": [
+        "gui_remains_open"
+      ],
+      "default_budget_steps": 24,
+      "completion_criterion": "The previously open inventory, crafting, or furnace GUI must be visibly closed and first-person world control restored."
+    }
+  ]
+}

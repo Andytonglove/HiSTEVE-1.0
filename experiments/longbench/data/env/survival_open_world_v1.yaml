@@ -1,0 +1,24 @@
+defaults:
+  - base
+  - _self_
+
+seed: 260604
+random_tp_range: 6000
+start_time: 1000
+candidate_preferred_spawn_biome:
+  - plains
+  - forest
+  - birch_forest
+  - taiga
+
+task_conf:
+  - name: "survival"
+    text: "open world survival long horizon"
+
+reward_conf: []
+init_inventory: []
+mobs: []
+command: []
+
+need_crafting_table: False
+need_gui: False

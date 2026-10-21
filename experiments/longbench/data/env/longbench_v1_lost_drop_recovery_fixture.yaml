@@ -1,0 +1,39 @@
+# Place a log beyond pickup range for the drop-recovery task.
+defaults:
+  - base
+  - _self_
+
+seed: 260917
+random_tp_range: 1000
+start_time: 1000
+candidate_preferred_spawn_biome:
+  - plains
+
+task_conf:
+  - name: "longbench_v1"
+    text: "Recover a recently mined log that was not immediately collected, then use it to make planks."
+
+reward_conf:
+  - event: "mine_block"
+    objects: ["oak_log"]
+    reward: 0.25
+    identity: "mine_oak_log"
+    max_reward_times: 1
+  - event: "craft_item"
+    objects: ["oak_planks"]
+    reward: 1.0
+    identity: "craft_oak_planks"
+    max_reward_times: 1
+
+init_inventory: []
+mobs: []
+command:
+  - "/time set day"
+  # Load the controlled chunk before fill/setblock commands target it.
+  - "/tp @p 31.5 80 63.0 180 0"
+  - "/fill 28 78 55 35 79 66 minecraft:grass_block"
+  - "/fill 29 80 56 34 84 65 minecraft:air"
+  - "/setblock 31 81 59 minecraft:oak_log[axis=y]"
+
+need_crafting_table: False
+need_gui: False

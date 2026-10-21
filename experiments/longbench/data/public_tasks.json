@@ -1,0 +1,157 @@
+{
+  "benchmark": "minecraft_real_wild_longbench_v1",
+  "schema_version": 1,
+  "tasks": [
+    {
+      "task_id": "wooden_age_v1",
+      "instruction": "Start with an empty inventory and obtain a crafting table and a wooden pickaxe.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [{"inventory_at_least": {"crafting_table": 1, "wooden_pickaxe": 1}}],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true, "real_gui": true},
+      "budget": {"steps": 3200, "minutes": 12},
+      "tags": ["craft", "gui", "short_compositional"]
+    },
+    {
+      "task_id": "stone_age_v1",
+      "instruction": "Start with an empty inventory and obtain a stone pickaxe and a furnace.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [{"inventory_at_least": {"stone_pickaxe": 1, "furnace": 1}}],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true, "real_gui": true},
+      "budget": {"steps": 5600, "minutes": 20},
+      "tags": ["craft", "gui", "tool_progression"]
+    },
+    {
+      "task_id": "light_up_v1",
+      "instruction": "Start with an empty inventory and make at least four torches using charcoal produced by the agent.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [
+        {"inventory_at_least": {"torch": 4}},
+        {"flag_equals": {"charcoal_produced": true}}
+      ],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true, "real_gui": true},
+      "budget": {"steps": 7200, "minutes": 25},
+      "tags": ["craft", "smelt", "alternative_recipe"]
+    },
+    {
+      "task_id": "cook_dinner_v1",
+      "instruction": "Start with an empty inventory, obtain raw food in the wild, and cook at least one edible item.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [{"inventory_any_at_least": {"items": ["cooked_beef", "cooked_porkchop", "cooked_chicken", "cooked_mutton"], "count": 1}}],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true, "real_gui": true},
+      "budget": {"steps": 7600, "minutes": 28},
+      "tags": ["search", "combat", "smelt", "food"]
+    },
+    {
+      "task_id": "glass_maker_v1",
+      "instruction": "Start with an empty inventory and obtain at least three glass blocks made from sand.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [{"inventory_at_least": {"glass": 3}}],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true, "real_gui": true},
+      "budget": {"steps": 7600, "minutes": 28},
+      "tags": ["exploration", "resource_search", "smelt"]
+    },
+    {
+      "task_id": "survival_iron_ingot_v2",
+      "instruction": "Start with an empty inventory and obtain one iron ingot in natural survival Minecraft.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [{"inventory_at_least": {"iron_ingot": 1}}],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true, "real_gui": true},
+      "budget": {"steps": 12000, "minutes": 40},
+      "tags": ["long_horizon", "craft", "mine", "smelt"]
+    },
+    {
+      "task_id": "iron_tool_v1",
+      "instruction": "Start with an empty inventory and obtain one iron pickaxe.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [{"inventory_at_least": {"iron_pickaxe": 1}}],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true, "real_gui": true},
+      "budget": {"steps": 15000, "minutes": 50},
+      "tags": ["long_horizon", "tool_progression", "gui"]
+    },
+    {
+      "task_id": "field_camp_v1",
+      "instruction": "Start with an empty inventory and establish a camp with a placed crafting table, furnace, chest, and torch.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [{"placed_at_least": {"crafting_table": 1, "furnace": 1, "chest": 1, "torch": 1}}],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true, "real_gui": true},
+      "budget": {"steps": 14000, "minutes": 45},
+      "tags": ["long_horizon", "branching", "placement"]
+    },
+    {
+      "task_id": "cave_survey_v1",
+      "instruction": "Find and enter a natural cave, record its entrance, then return safely to the surface near the entrance.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [
+        {"flag_equals": {"cave_entrance_recorded": true}},
+        {"flag_equals": {"cave_entered": true}},
+        {"flag_equals": {"returned_to_cave_entrance": true}}
+      ],
+      "constraints": {"no_commands": true, "no_teleport": true, "natural_cave": true},
+      "budget": {"steps": 6000, "minutes": 22},
+      "tags": ["exploration", "world_memory", "return_navigation"]
+    },
+    {
+      "task_id": "resource_revisit_v1",
+      "instruction": "Discover both a tree resource site and exposed stone, leave the first site, then return to the requested stored resource location.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival", "requested_return": "sampled"},
+      "goal_predicates": [
+        {"flag_equals": {"tree_site_recorded": true}},
+        {"flag_equals": {"stone_site_recorded": true}},
+        {"flag_equals": {"returned_to_requested_resource": true}}
+      ],
+      "constraints": {"no_commands": true, "no_teleport": true},
+      "budget": {"steps": 6500, "minutes": 24},
+      "tags": ["exploration", "world_memory", "retrieval"]
+    },
+    {
+      "task_id": "camp_return_v1",
+      "instruction": "Place a crafting table as a camp landmark, travel beyond visual range, and return to the same table.",
+      "initial_state": {"inventory": "empty", "world": "natural_survival"},
+      "goal_predicates": [
+        {"placed_at_least": {"crafting_table": 1}},
+        {"flag_equals": {"left_camp_visual_range": true}},
+        {"flag_equals": {"returned_to_same_camp": true}}
+      ],
+      "constraints": {"no_commands": true, "no_teleport": true, "same_landmark_required": true},
+      "budget": {"steps": 6000, "minutes": 22},
+      "tags": ["craft", "world_memory", "return_navigation"]
+    },
+    {
+      "task_id": "tool_break_recovery_v1",
+      "instruction": "Continue collecting stone after the active wooden pickaxe breaks, recovering by making or equipping a usable replacement.",
+      "initial_state": {"inventory": "controlled_low_durability_wooden_pickaxe", "world": "natural_survival"},
+      "goal_predicates": [
+        {"flag_equals": {"tool_break_observed": true}},
+        {"inventory_at_least": {"cobblestone": 6}},
+        {"inventory_any_at_least": {"items": ["wooden_pickaxe", "stone_pickaxe"], "count": 1}}
+      ],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts_after_start": true},
+      "budget": {"steps": 3600, "minutes": 14},
+      "tags": ["recovery", "state_change", "replan"]
+    },
+    {
+      "task_id": "fuel_alternative_v1",
+      "instruction": "Smelt one iron ingot without using coal, selecting another fuel available in the world.",
+      "initial_state": {"inventory": "controlled_raw_iron_no_coal", "world": "natural_survival"},
+      "goal_predicates": [
+        {"inventory_at_least": {"iron_ingot": 1}},
+        {"flag_equals": {"non_coal_fuel_used": true}}
+      ],
+      "constraints": {"no_commands": true, "coal_fuel_forbidden": true, "real_gui": true},
+      "budget": {"steps": 4800, "minutes": 18},
+      "tags": ["recovery", "alternative_plan", "smelt"]
+    },
+    {
+      "task_id": "lost_drop_recovery_v1",
+      "instruction": "Recover a recently mined log that was not immediately collected, then use it to make planks.",
+      "initial_state": {"inventory": "empty", "world": "controlled_natural_drop"},
+      "goal_predicates": [
+        {"flag_equals": {"missed_drop_observed": true}},
+        {"inventory_any_at_least": {"items": ["oak_planks", "birch_planks", "spruce_planks", "planks"], "count": 4}}
+      ],
+      "constraints": {"no_commands": true, "no_inventory_shortcuts": true},
+      "budget": {"steps": 2400, "minutes": 10},
+      "tags": ["recovery", "local_search", "event_memory"]
+    }
+  ]
+}

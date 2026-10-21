@@ -1,0 +1,29 @@
+# Start with a nearly broken pickaxe for the tool-recovery task.
+defaults:
+  - base
+  - _self_
+
+seed: 260915
+random_tp_range: 1000
+start_time: 1000
+candidate_preferred_spawn_biome:
+  - plains
+
+task_conf:
+  - name: "longbench_v1"
+    text: "Continue collecting stone after the active wooden pickaxe breaks, recovering by making or equipping a usable replacement."
+
+reward_conf: []
+init_inventory: []
+mobs: []
+command:
+  - "/time set day"
+  # Load the target chunk before editing its blocks.
+  - "/tp @p 31.5 80 62.5 180 0"
+  - "/fill 28 78 55 35 79 66 minecraft:grass_block"
+  - "/fill 29 80 56 34 84 65 minecraft:air"
+  - "/setblock 31 81 59 minecraft:stone"
+  - '/replaceitem entity @p hotbar.0 minecraft:wooden_pickaxe{Damage:58} 1'
+
+need_crafting_table: False
+need_gui: False

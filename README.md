@@ -3,7 +3,7 @@
 <p align="center"><strong>A three-layer agent harness for long-horizon Minecraft tasks.</strong></p>
 
 <p align="center">
-  <a href="#overview">Overview</a> · <a href="#installation">Installation</a> · <a href="#usage">Usage</a> · <a href="#repository-layout">Code</a>
+  <a href="#overview">Overview</a> · <a href="#installation">Installation</a> · <a href="#usage">Usage</a> · <a href="#repository-layout">Code</a> · <a href="#citation">Citation</a>
 </p>
 
 <p align="center">
@@ -127,3 +127,19 @@ python -m pytest -q
 ```
 
 [LongBench](experiments/longbench/README.md) provides a separate, experimental evaluation suite with task definitions, reset configurations, and scoring tools.
+
+
+## Citation
+
+If you find HiSTEVE useful in your research, please consider citing our paper:
+
+```bibtex
+@article{tang2026histeve,
+  title   = {HiSTEVE 1.0: Harnessing Human-Interface VLA Agents for Open-World Games},
+  author  = {Tang, Zecong and Guan, Zian and Guo, Yuncheng and Zhang, Zhanqiu and Guo, Yiwen and Dai, Bo},
+  journal = {arXiv preprint arXiv:2610.31162},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2610.31162}
+}
+```
+
